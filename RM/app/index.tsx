@@ -1,64 +1,94 @@
-import { View, Text, Image, StyleSheet, FlatList, StatusBar } from "react-native";
+import { View, Text, Image, StyleSheet, FlatList, ActivityIndicator, SafeAreaView } from "react-native";
 import { useEffect, useState } from "react";
 import React from "react";
 
 
 
 const Index = () => {
+  const [loading, setLoading] = useState(false);
   const [characters, setCharacters] = useState([]);
+  const [nextPage, setNextPage] = useState('https://rickandmortyapi.com/api/character');
+       
+
+  const fetchNextPage = async () => {
+    setLoading(true);
+    const response = await fetch(nextPage);
+    const responseJson = await response.json();
+    console.log(JSON.stringify(responseJson));
+      
+    setCharacters((existingCharacters) => {
+      return [...existingCharacters, ...responseJson.results];
+      });
+    setNextPage(responseJson.info.next);
+
+    setLoading(false);
+  }
+
 
   useEffect(() => {
-    getCharacters();
-  }, [])
 
-  const getCharacters = () => {
-    let api = `https://rickandmortyapi.com/api/character`;
-    
-    fetch(api)
-    .then((res) => {
-      return res.json();
-    }).then(data=>{
-      setCharacters(data.results)
-      console.log(data.results)
-    }) 
-  };
-
+    fetchNextPage();
+  }, []);
+  
   return (
-    
-      <View style={indexStyles.container}>
-        <Text style={indexStyles.title}>Rick&Morty Character List</Text>
-        <FlatList 
-          data={characters}
-          keyExtractor={item => item.id}
-          numColumns={2}
-          renderItem={( { item } ) => 
-          <View style={indexStyles.innerContainer}>
-            <img src={item.image} />
-            <Text>{item.name}</Text>
-          </View>} 
-        />
-      </View>
-    
-  );
-};
+    <SafeAreaView>
+      <Text style={indexStyles.title}>Rick and Morty character list</Text>
+      <FlatList 
+        data={characters}
+        keyExtractor={item => item.id}
+        renderItem={( { item } ) => 
+        <View style={indexStyles.innerContainer}>
+          <Image 
+          source={{uri: item.image}} 
+          style={{width: 300, height:300}}/>
+          <Text style={indexStyles.itemText}>Name: {item.name}</Text>
+        </View>} 
+        ListFooterComponent={() =>(
+          <View>
+            {loading && <ActivityIndicator />}
+            <Text 
+              style={indexStyles.button}
+              onPress={fetchNextPage}>
+              Load more
+            </Text>
+          </View>)}
+      />
+    </SafeAreaView>   
+  )
+  
+}
 
 const indexStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginTop: StatusBar.currentHeight || 0,
+ 
+  title: {
+    fontSize: 26,
+    fontWeight: 'bold',
+    padding: 8,
+    alignSelf: 'center',
+  },
+ 
+    innerContainer: {
+    margin: 15,
+    borderWidth: 5,    
+    borderColor: 'black',
     alignItems: 'center',
   },
-
-  innerContainer: {
-    margin: 15,
-
+ 
+  itemText: {
+    fontSize: 22,
+    padding: 8,
   },
 
-  title: {
-    fontSize: 36,
+  button: {
+    height: 100,
+    fontSize: 20,
     fontWeight: 'bold',
-  },
-
+    color: 'blue',
+    padding: 8,
+    alignSelf: 'center',
+  }
 })
+
+
 
 export default Index;
