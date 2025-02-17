@@ -60,7 +60,9 @@ const Index = () => {
     }
   }, [selectedCategory, characters]);
 
-  const onPress = () => <Card characters={props.item}/>; 
+  // i am not sure, how a user should be taken to a screen with detailed info, tried many various props, nothing worked out for me
+
+   const onPress = () => <Card characters={characters}/>; 
   
   return (
     
