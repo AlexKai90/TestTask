@@ -1,9 +1,9 @@
-import { View, Text, Image, StyleSheet, FlatList, ActivityIndicator, SafeAreaView } from "react-native";
+import { Link, Redirect } from 'expo-router';
+import { View, Text, Image, StyleSheet, FlatList, ActivityIndicator, StatusBar, TouchableOpacity } from "react-native";
 import { useEffect, useState } from "react";
 import React from "react";
-import {Picker} from '@react-native-picker/picker';
-
-
+import { Pressable } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 
 const Index = () => {
   const [loading, setLoading] = useState(false);
@@ -61,10 +61,11 @@ const Index = () => {
 
   
   return (
-    <SafeAreaView>
-      <Text style={indexStyles.title}>Rick and Morty character list</Text>
+    
+    <View style={homeStyles.container}> 
+      <Text style={homeStyles.title}>Rick and Morty character list</Text>
 
-      <View style={indexStyles.picker}>                         // Dropdown filter
+      <View style={homeStyles.picker}>                         
         <Picker
           selectedValue={selectedCategory}
           onValueChange={(itemValue) =>
@@ -79,28 +80,38 @@ const Index = () => {
         </Picker>
       </View>
       
-      <FlatList 
-        data={filteredCharacters}
-        keyExtractor={item => item.id}
-        renderItem={( { item } ) => 
-        <View style={indexStyles.innerContainer} onPress={}> 
-          <Image 
-          source={{uri: item.image}} 
-          style={{width: 300, height:300}}/>
-          <Text style={indexStyles.itemText}>Name: {item.name}</Text>
-        </View>} 
-        onEndReached={fetchNextPage}
-        onEndReachedThreshold={4}
-        ListFooterComponent={() =>(
-          <View>{loading && <ActivityIndicator />}</View>)}
-      />
-    </SafeAreaView>   
+      <View style={homeStyles.flatList}>
+        <FlatList 
+          data={filteredCharacters}
+          keyExtractor={item => item.id}
+          renderItem={( { item } ) => 
+          <TouchableOpacity style={homeStyles.innerContainer} onPress={() => <Redirect href='/screens/card'/>}>
+            <Image 
+            source={{uri: item.image}} 
+            style={{width: 300, height:300}}/>
+            <Text style={homeStyles.itemText}>Name: {item.name}</Text>
+          </TouchableOpacity>} 
+          onEndReached={fetchNextPage}
+          onEndReachedThreshold={4}
+          ListFooterComponent={() =>(
+            <View>{loading && <ActivityIndicator />}</View>)}
+        />
+      </View>
+      
+    
+   
+    </View>
+   
+   
   )
   
 }
 
-const indexStyles = StyleSheet.create({
- 
+const homeStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+
   title: {
     fontSize: 26,
     fontWeight: 'bold',
@@ -109,7 +120,7 @@ const indexStyles = StyleSheet.create({
     marginTop: StatusBar.currentHeight || 0,
   },
  
-    innerContainer: {
+  innerContainer: {
     margin: 15,
     borderWidth: 5,    
     borderColor: 'black',
@@ -120,9 +131,20 @@ const indexStyles = StyleSheet.create({
     fontSize: 22,
     padding: 8,
   },
+
+  flatList: {
+    flex: 1,
+  },
+
+
+  button: {
+    fontSize: 22,
+    padding: 7,
+    color: 'white',
+  },
  
 })
 
-
-
 export default Index;
+
+
