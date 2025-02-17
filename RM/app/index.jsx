@@ -2,8 +2,9 @@ import { Link, Redirect } from 'expo-router';
 import { View, Text, Image, StyleSheet, FlatList, ActivityIndicator, StatusBar, TouchableOpacity } from "react-native";
 import { useEffect, useState } from "react";
 import React from "react";
-import { Pressable } from 'react-native';
+import { Pressable, Linking } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import Card from './Card';
 
 const Index = () => {
   const [loading, setLoading] = useState(false);
@@ -59,6 +60,7 @@ const Index = () => {
     }
   }, [selectedCategory, characters]);
 
+  const onPress = () => <Card characters={props.item}/>; 
   
   return (
     
@@ -85,7 +87,7 @@ const Index = () => {
           data={filteredCharacters}
           keyExtractor={item => item.id}
           renderItem={( { item } ) => 
-          <TouchableOpacity style={homeStyles.innerContainer} onPress={() => <Redirect href='/screens/card'/>}>
+          <TouchableOpacity style={homeStyles.innerContainer} onPress={onPress}>
             <Image 
             source={{uri: item.image}} 
             style={{width: 300, height:300}}/>

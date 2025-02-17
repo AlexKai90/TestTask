@@ -6,11 +6,11 @@ export default function _layout() {
       <Tabs.Screen
         name='index'
         options={{
-          headerShown: false
+          headerShown: false,
         }} />
       <Tabs.Screen
         name='Card'
-        options={{
+        options={{ title: '${props.name}',
           href: null,
         }} />
       <Tabs.Screen
